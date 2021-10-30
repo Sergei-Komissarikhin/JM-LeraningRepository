@@ -9,38 +9,38 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
     private static String SAVE_USER =
-            "INSERT INTO my_db.my_first_table " +
+            "INSERT INTO users " +
                     "(name, last_name, age) VALUES (?, ?, ?)";
 
     private static String REMOVE_USER =
-            "DELETE FROM my_db.my_first_table WHERE id = ?";
+            "DELETE FROM users WHERE id = ?";
 
     public UserDaoJDBCImpl() {
     }
 
     public void createUsersTable() {
         String CREATE_TABLE =
-                "CREATE TABLE IF NOT EXISTS my_first_table(" +
-                        "id INT PRIMARY KEY AUTO_INCREMENT," +
+                "CREATE TABLE IF NOT EXISTS users(" +
+                        "id BIGINT PRIMARY KEY AUTO_INCREMENT," +
                         "name VARCHAR(45)," +
                         "last_name VARCHAR(45)," +
                         "age TINYINT(3))";
         try (Connection connection = Util.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute(CREATE_TABLE);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 
     public void dropUsersTable() {
         String DROP_TABLE =
-                "DROP TABLE IF EXISTS my_first_table";
+                "DROP TABLE IF EXISTS users";
         try (Connection connection = Util.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute(DROP_TABLE);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -55,8 +55,8 @@ public class UserDaoJDBCImpl implements UserDao {
             preparedStatement.execute();
             System.out.println("User с именем – " + name
                     + " добавлен в базу данных");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -64,16 +64,16 @@ public class UserDaoJDBCImpl implements UserDao {
         try (Connection connection = Util.getConnection();
              PreparedStatement preparedStatement =
                      connection.prepareStatement(REMOVE_USER)) {
-            preparedStatement.setInt(1, (int) id);
+            preparedStatement.setLong(1, id);
             preparedStatement.execute();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 
     public List<User> getAllUsers() {
         String GET_ALL =
-                "SELECT * FROM my_db.my_first_table";
+                "SELECT * FROM users";
         List<User> listUsers = new ArrayList<>();
 
         try (Connection connection = Util.getConnection();
@@ -83,27 +83,27 @@ public class UserDaoJDBCImpl implements UserDao {
 
             while (resultSet.next()) {
                 User user = new User();
-                user.setId((long) resultSet.getInt("id"));
+                user.setId(resultSet.getLong("id"));
                 user.setName(resultSet.getString("name"));
                 user.setLastName(resultSet.getString("last_name"));
                 user.setAge(resultSet.getByte("age"));
                 listUsers.add(user);
             }
 
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
         return listUsers;
     }
 
     public void cleanUsersTable() {
         String CLEAR =
-                "DELETE FROM my_db.my_first_table";
+                "DELETE FROM users";
         try (Connection connection = Util.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute(CLEAR);
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
         }
     }
 }
