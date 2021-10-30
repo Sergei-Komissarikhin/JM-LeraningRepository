@@ -15,6 +15,8 @@ public class UserDaoJDBCImpl implements UserDao {
     private static String REMOVE_USER =
             "DELETE FROM users WHERE id = ?";
 
+
+
     public UserDaoJDBCImpl() {
     }
 
